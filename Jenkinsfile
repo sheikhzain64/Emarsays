@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        PYTHON_IMAGE = 'python:3.9'
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
@@ -13,24 +9,11 @@ pipeline {
             }
         }
 
-        stage('Debug Workspace') {
-            steps {
-                sh 'ls -lah'  // Extra check to confirm files exist
-            }
-        }
-
-        stage('Setup Python') {
-            steps {
-                sh 'docker pull ${PYTHON_IMAGE}'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    if [ -f "${WORKSPACE}/requirements.txt" ]; then
-                        docker run --rm -v "${WORKSPACE}:/workspace" ${PYTHON_IMAGE} \
-                        sh -c "pip install --upgrade pip && pip install -r /workspace/requirements.txt"
+                    if [ -f "requirements.txt" ]; then
+                        pip install --upgrade pip && pip install -r requirements.txt
                     else
                         echo "No requirements.txt found, skipping dependencies installation."
                     fi
@@ -40,18 +23,15 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh '''
-                    docker run --rm -v "${WORKSPACE}:/workspace" ${PYTHON_IMAGE} \
-                    python /workspace/calculate_due_date.py
-                '''
+                sh 'python calculate_due_date.py'
             }
         }
 
         stage('Lint Code') {
             steps {
                 sh '''
-                    docker run --rm -v "${WORKSPACE}:/workspace" ${PYTHON_IMAGE} \
-                    sh -c "pip install flake8 && flake8 /workspace --count --select=E9,F63,F7,F82 --show-source --statistics"
+                    pip install flake8
+                    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
                 '''
             }
         }

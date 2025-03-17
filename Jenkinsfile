@@ -12,7 +12,7 @@ pipeline {
                 sh 'ls -lah'  // Debugging step to verify files
             }
         }
-        
+
         stage('Debug Workspace') {
             steps {
                 sh 'ls -lah'  // Extra check to confirm files exist
@@ -37,7 +37,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    docker run --rm -v "$PWD":/app -w /app ${PYTHON_IMAGE} python calculate_due_date.py
+                    docker run --rm -v "${WORKSPACE}":/app -w /app ${PYTHON_IMAGE} python calculate_due_date.py
                 '''
             }
         }

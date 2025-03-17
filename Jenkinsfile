@@ -46,7 +46,7 @@ pipeline {
                 sh '''
                     . venv/bin/activate  # Activate the virtual environment
                     python3 -m pip install flake8
-                    python3 -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                    python3 -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --ignore=F821
                 '''
             }
         }

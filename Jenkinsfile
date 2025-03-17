@@ -28,7 +28,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    docker run --rm -v "${WORKSPACE}":/app -w /app ${PYTHON_IMAGE} \
+                    docker run --rm -v "${WORKSPACE}:${WORKSPACE}" ${PYTHON_IMAGE} \
                     sh -c "pip install --upgrade pip && pip install -r requirements.txt || echo 'No requirements.txt found, skipping.'"
                 '''
             }
@@ -37,7 +37,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    docker run --rm -v "${WORKSPACE}":/app -w /app ${PYTHON_IMAGE} python calculate_due_date.py
+                    docker run --rm -v "${WORKSPACE}:${WORKSPACE}" ${PYTHON_IMAGE} python calculate_due_date.py
                 '''
             }
         }
@@ -45,7 +45,7 @@ pipeline {
         stage('Lint Code') {
             steps {
                 sh '''
-                    docker run --rm -v "${WORKSPACE}":/app -w /app ${PYTHON_IMAGE} \
+                    docker run --rm -v "${WORKSPACE}:${WORKSPACE}" ${PYTHON_IMAGE} \
                     sh -c "pip install flake8 && flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || echo 'Linting issues found.'"
                 '''
             }

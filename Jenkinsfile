@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    environment {
+        PYTHON_IMAGE = 'python:3.9' // Using Python 3.9 Docker image
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -10,27 +14,36 @@ pipeline {
         
         stage('Setup Python') {
             steps {
-                sh 'apt update && apt install -y python3 python3-pip'
+                script {
+                    sh 'docker pull ${PYTHON_IMAGE}'
+                }
             }
         }
         
         stage('Install Dependencies') {
             steps {
-                sh 'pip3 install --upgrade pip'
-                sh 'pip3 install -r requirements.txt || echo "No requirements.txt found, skipping."'
+                sh '''
+                    docker run --rm -v $(pwd):/app -w /app ${PYTHON_IMAGE} \
+                    sh -c "pip install --upgrade pip && pip install -r requirements.txt || echo 'No requirements.txt found, skipping.'"
+                '''
             }
         }
         
         stage('Run Tests') {
             steps {
-                sh 'python3 -m unittest discover -s . -p "*.py"'
+                sh '''
+                    docker run --rm -v $(pwd):/app -w /app ${PYTHON_IMAGE} \
+                    sh -c "python -m unittest discover -s . -p '*.py'"
+                '''
             }
         }
         
         stage('Lint Code') {
             steps {
-                sh 'pip3 install flake8'
-                sh 'flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || echo "Linting issues found."'
+                sh '''
+                    docker run --rm -v $(pwd):/app -w /app ${PYTHON_IMAGE} \
+                    sh -c "pip install flake8 && flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || echo 'Linting issues found.'"
+                '''
             }
         }
         

@@ -13,7 +13,8 @@ pipeline {
             steps {
                 sh '''
                     if [ -f "requirements.txt" ]; then
-                        pip install --upgrade pip && pip install -r requirements.txt
+                        python3 -m pip install --upgrade pip
+                        python3 -m pip install -r requirements.txt
                     else
                         echo "No requirements.txt found, skipping dependencies installation."
                     fi
@@ -23,15 +24,15 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'python calculate_due_date.py'
+                sh 'python3 calculate_due_date.py'
             }
         }
 
         stage('Lint Code') {
             steps {
                 sh '''
-                    pip install flake8
-                    flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                    python3 -m pip install flake8
+                    python3 -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
                 '''
             }
         }

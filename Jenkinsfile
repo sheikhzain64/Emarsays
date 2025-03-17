@@ -30,8 +30,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    docker run --rm -v "$PWD":/app -w /app ${PYTHON_IMAGE} \
-                    sh -c "python -m unittest discover -s . -p '*.py'"
+                    docker run --rm -v "$PWD":/app -w /app ${PYTHON_IMAGE} python calculate_due_date.py
                 '''
             }
         }

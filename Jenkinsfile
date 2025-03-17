@@ -9,6 +9,13 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/sheikhzain64/Emarsays'
+                sh 'ls -lah'  // Debugging step to verify files
+            }
+        }
+        
+        stage('Debug Workspace') {
+            steps {
+                sh 'ls -lah'  // Extra check to confirm files exist
             }
         }
 

@@ -13,7 +13,7 @@ pipeline {
             steps {
                 sh '''
                     python3 -m venv venv  # Create a virtual environment
-                    source venv/bin/activate  # Activate it
+                    . venv/bin/activate  # Activate it using the dot (.)
                     python3 -m pip install --upgrade pip  # Upgrade pip inside venv
                 '''
             }
@@ -22,7 +22,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    source venv/bin/activate
+                    . venv/bin/activate  # Activate the virtual environment
                     if [ -f "requirements.txt" ]; then
                         python3 -m pip install -r requirements.txt
                     else
@@ -35,7 +35,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                    source venv/bin/activate
+                    . venv/bin/activate  # Activate the virtual environment
                     python3 calculate_due_date.py
                 '''
             }
@@ -44,7 +44,7 @@ pipeline {
         stage('Lint Code') {
             steps {
                 sh '''
-                    source venv/bin/activate
+                    . venv/bin/activate  # Activate the virtual environment
                     python3 -m pip install flake8
                     python3 -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
                 '''
